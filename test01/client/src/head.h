@@ -34,12 +34,12 @@
 #include <sys/uio.h>
 #include <sys/sendfile.h>
 
-#define ARGS_CHECK(argc, val) {\
-    if(argc != val) {\
-        printf("error args\n");\
-        return -1;\
-    }\
-}
+/* #define ARGS_CHECK(argc, val) {\ */
+/*     if(argc != val) {\ */
+/*         printf("error args\n");\ */
+/*         return -1;\ */
+/*     }\ */
+/* } */
 
 #define ERROR_CHECK(ret, retVal, funcName) {\
     if(ret == retVal) {\
@@ -61,5 +61,12 @@
         return (void*)-1;\
     }\
 }
+
+typedef struct Config {
+    char ip[17];
+    char port[6];
+}Config_t, *pConfig_t;
+
+void configInfo(pConfig_t);
 
 #endif

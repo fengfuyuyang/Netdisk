@@ -1,6 +1,6 @@
 SRCS:=$(wildcard *.c)
 OBJS:=$(patsubst %.c,%.o,$(SRCS))
-ELF:=main
+ELF:=server
 CC:=gcc
 $(ELF):$(OBJS)
 	$(CC) -o $@ $^

@@ -7,17 +7,23 @@
 
 #include "head.h"
 
-int main(int argc, char* argv[])
+int main()
 {
-    ARGS_CHECK(argc, 3);
+    Config_t config = {};
+    configInfo(&config);
+
+#if 0
+    printf("ip: %s\nport: %s\n", config.ip, config.port);
+
+#endif
     int socketFd = socket(AF_INET, SOCK_STREAM, 0);
     ERROR_CHECK(socketFd, -1, "socket");
 
     struct sockaddr_in serAddr;
     bzero(&serAddr, sizeof(serAddr));
     serAddr.sin_family = AF_INET;
-    serAddr.sin_port = htons(atoi(argv[2]));
-    serAddr.sin_addr.s_addr = inet_addr(argv[1]);
+    serAddr.sin_port = htons(atoi(config.port));
+    serAddr.sin_addr.s_addr = inet_addr(config.ip);
 
     int ret;
     ret = connect(socketFd, (struct sockaddr*)&serAddr, sizeof(serAddr));

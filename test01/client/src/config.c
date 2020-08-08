@@ -5,12 +5,12 @@
     > Created Date: 2020-08-08
  ******************************************************************************/
 
-#include "factory.h"
+#include "head.h"
 
 void configInfo(pConfig_t config)
 {
     FILE *fp;
-    if (NULL == (fp = fopen("../conf/server.conf", "r"))) {
+    if (NULL == (fp = fopen("../conf/client.conf", "r"))) {
         perror("config");
         return;
     }
@@ -30,18 +30,18 @@ void configInfo(pConfig_t config)
 
             if (0 == strcmp(key, "ip")) {
                 strcpy(config->ip, value);
-            } else if (0 == strcmp(key, "port")) {
+            } 
+            
+            if (0 == strcmp(key, "port")) {
                 strcpy(config->port, value);
-            } else if (0 == strcmp(key, "threadnum")) {
-                config->threadnum = atoi(value);
-            }else if (0 == strcmp(key, "capacity")) {
-                config->capacity = atoi(value);
             }
+
             bzero(key, sizeof(key));
         }
     }
-    if (!strlen(config->ip) || !strlen(config->port) || !config->threadnum || !config->capacity) {
-        puts("Configuration error, please check the server.conf!");
+
+    if (!strlen(config->ip) || !strlen(config->port)) {
+        puts("Configuration error, please check the client.conf!");
         exit(EXIT_FAILURE);
     }
 }
