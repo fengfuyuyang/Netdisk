@@ -15,6 +15,7 @@ typedef struct Config {
     int capacity;
 }Config_t, *pConfig_t;
 
-void configInfo(pConfig_t);
+bool configInfo(pConfig_t);
+int tcpInit(int*, char*, char*);
 #endif
 

@@ -10,7 +10,10 @@
 int main()
 {
     Config_t config = {};
-    configInfo(&config);
+    if (!configInfo(&config)) {
+        puts("Configuration error, please check the client.conf!");
+        return -1;
+    }
 
 #if 0
     printf("ip: %s\nport: %s\n", config.ip, config.port);
@@ -54,7 +57,7 @@ int main()
 
             if (FD_ISSET(socketFd, &rdset)) {
                 bzero(buf, sizeof(buf));
-                ret = recv(socketFd, buf, sizeof(buf), 0);
+                ret = recv(socketFd, buf, sizeof(buf) - 1, 0);
 
                 if (0 == ret) {
                     printf("byebye\n");

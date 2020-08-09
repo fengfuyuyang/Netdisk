@@ -7,12 +7,11 @@
 
 #include "factory.h"
 
-void configInfo(pConfig_t config)
+bool configInfo(pConfig_t config)
 {
     FILE *fp;
     if (NULL == (fp = fopen("../conf/server.conf", "r"))) {
-        perror("config");
-        return;
+        return false;
     }
     char *p, *q;
     char buf[64] = {};
@@ -40,9 +39,13 @@ void configInfo(pConfig_t config)
             bzero(key, sizeof(key));
         }
     }
-    if (!strlen(config->ip) || !strlen(config->port) || !config->threadnum || !config->capacity) {
-        puts("Configuration error, please check the server.conf!");
-        exit(EXIT_FAILURE);
+
+    if (!strlen(config->ip) || !strlen(config->port) 
+        || !config->threadnum || !config->capacity) {
+        /* puts("Configuration error, please check the server.conf!"); */
+        return false;
+    } else {
+        return true;
     }
 }
 

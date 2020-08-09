@@ -7,12 +7,12 @@
 
 #include "head.h"
 
-void configInfo(pConfig_t config)
+bool configInfo(pConfig_t config)
 {
     FILE *fp;
     if (NULL == (fp = fopen("../conf/client.conf", "r"))) {
-        perror("config");
-        return;
+        /* perror("config"); */
+        return false;
     }
     char *p, *q;
     char buf[64] = {};
@@ -41,8 +41,10 @@ void configInfo(pConfig_t config)
     }
 
     if (!strlen(config->ip) || !strlen(config->port)) {
-        puts("Configuration error, please check the client.conf!");
-        exit(EXIT_FAILURE);
+        /* puts("Configuration error, please check the client.conf!"); */
+        return false;
+    } else {
+        return true;
     }
 }
 

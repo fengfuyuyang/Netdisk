@@ -67,6 +67,6 @@ typedef struct Config {
     char port[6];
 }Config_t, *pConfig_t;
 
-void configInfo(pConfig_t);
+bool configInfo(pConfig_t);
 
 #endif
