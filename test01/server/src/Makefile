@@ -1,6 +1,6 @@
 SRCS:=$(wildcard *.c)
 OBJS:=$(patsubst %.c,%.o,$(SRCS))
-ELF:=server
+ELF:=ftpserver
 CC:=gcc
 $(ELF):$(OBJS)
 	$(CC) -o $@ $^

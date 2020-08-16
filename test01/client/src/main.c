@@ -32,43 +32,60 @@ int main()
     ret = connect(socketFd, (struct sockaddr*)&serAddr, sizeof(serAddr));
     ERROR_CHECK(ret, -1, "connect");
 
-    fd_set rdset;
-    char buf[1024];
+    /* fd_set rdset; */
+    char buf[16];
+
+    int epfd = epoll_create(1);
+    struct epoll_event event, evs[2];
+    event.events = EPOLLIN;
+    event.data.fd = STDIN_FILENO;
+    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, STDIN_FILENO, &event);
+    ERROR_CHECK(ret, -1, "epoll_ctl");
+    
+    setNonBlock(socketFd);
+    event.events = EPOLLIN | EPOLLET;
+    event.data.fd = socketFd;
+    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, socketFd, &event);
+    ERROR_CHECK(ret, -1, "epoll_ctl");
+
+    int readyFdCount, i;
 
     while (1) {
-        FD_ZERO(&rdset);
-        FD_SET(STDIN_FILENO, &rdset);
-        FD_SET(socketFd, &rdset);
+        /* FD_ZERO(&rdset); */
+        /* FD_SET(STDIN_FILENO, &rdset); */
+        /* FD_SET(socketFd, &rdset); */
 
-        ret = select(socketFd + 1, &rdset, NULL, NULL, NULL);
+        /* ret = select(socketFd + 1, &rdset, NULL, NULL, NULL); */
 
-        if (ret > 0) {
-            if (FD_ISSET(STDIN_FILENO, &rdset)) {
+        readyFdCount = epoll_wait(epfd, evs, 3, -1);
+        for (i = 0; i < readyFdCount; ++i) {
+            if (evs[i].events == EPOLLIN && evs[i].data.fd == STDIN_FILENO) {
                 bzero(buf, sizeof(buf));
-                ret = read(STDIN_FILENO, buf, sizeof(buf));
-
+                ret = read(STDIN_FILENO, buf, sizeof(buf) - 1);
                 if (0 == ret) {
-                    printf("beybey\n");
-                    break;
+                    printf("Byebye\n");
+                    goto end;
                 }
-
-                send(socketFd, buf, strlen(buf) - 1, 0);
+                send(socketFd, buf, strlen(buf), 0);
             }
-
-            if (FD_ISSET(socketFd, &rdset)) {
-                bzero(buf, sizeof(buf));
-                ret = recv(socketFd, buf, sizeof(buf) - 1, 0);
-
-                if (0 == ret) {
-                    printf("byebye\n");
-                    break;
+            if (evs[i].data.fd == socketFd) {
+                while (1) {
+                    bzero(buf, sizeof(buf));
+                    ret = recv(socketFd, buf, sizeof(buf) - 1, 0);
+                    if (0 == ret) {
+                        printf("Byebye\n");
+                        goto end;
+                    } else if (-1 == ret) {
+                        break;
+                    } else {
+                        printf("%s", buf);
+                    }
                 }
-
-                printf("%s\n", buf);
+                /* printf("\n"); */
             }
         }
     }
-
+end:
     close(socketFd);
 
     return 0;

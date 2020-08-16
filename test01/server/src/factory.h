@@ -17,5 +17,6 @@ typedef struct Config {
 
 bool configInfo(pConfig_t);
 int tcpInit(int*, char*, char*);
+void setNonBlock(int);
 #endif
 

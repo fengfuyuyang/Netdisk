@@ -68,5 +68,6 @@ typedef struct Config {
 }Config_t, *pConfig_t;
 
 bool configInfo(pConfig_t);
+void setNonBlock(int);
 
 #endif
