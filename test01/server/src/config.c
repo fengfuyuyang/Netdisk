@@ -5,7 +5,7 @@
     > Created Date: 2020-08-08
  ******************************************************************************/
 
-#include "factory.h"
+#include "../include/factory.h"
 
 bool configInfo(pConfig_t config)
 {

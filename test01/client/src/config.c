@@ -5,7 +5,7 @@
     > Created Date: 2020-08-08
  ******************************************************************************/
 
-#include "head.h"
+#include "../include/head.h"
 
 bool configInfo(pConfig_t config)
 {

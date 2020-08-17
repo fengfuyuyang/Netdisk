@@ -5,7 +5,7 @@
     > Created Date: 2020-08-08
  ******************************************************************************/
 
-#include "func.h"
+#include "../include/head.h"
 
 int tcpInit(int *sfd, char* ip, char* port)
 {
