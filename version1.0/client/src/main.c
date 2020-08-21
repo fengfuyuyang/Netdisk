@@ -15,7 +15,7 @@ int main()
         return -1;
     }
 
-#if 1
+#if 0
     printf("ip: %s\nport: %d\n", config.ip, config.port);
 
 #endif
@@ -31,6 +31,10 @@ int main()
     int ret;
     ret = connect(socketFd, (struct sockaddr*)&serAddr, sizeof(serAddr));
     ERROR_CHECK(ret, -1, "connect");
+
+    while (-1 == login(socketFd)) {
+        printf("Login failed, please try again\n\n");
+    }
 
     int fd;
     int dataLen;
@@ -73,7 +77,7 @@ int main()
     /* event.data.fd = STDIN_FILENO; */
     /* ret = epoll_ctl(epfd, EPOLL_CTL_ADD, STDIN_FILENO, &event); */
     /* ERROR_CHECK(ret, -1, "epoll_ctl"); */
-    
+
     /* setNonBlock(socketFd); */
     /* event.events = EPOLLIN | EPOLLET; */
     /* event.data.fd = socketFd; */
@@ -117,7 +121,7 @@ int main()
     /*         } */
     /*     } */
     /* } */
-/* end: */
+    /* end: */
     /* close(socketFd); */
 
     /* return 0; */

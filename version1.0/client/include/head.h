@@ -67,8 +67,14 @@ typedef struct {
     int port;
 }Config_t, *pConfig_t;
 
+typedef struct {
+    int dataLen;
+    char buf[1000];
+}train_t;
+
 bool configInfo(pConfig_t);
 void setNonBlock(int);
 int recvCycle(int, void*, int);
+int login(int);
 
 #endif

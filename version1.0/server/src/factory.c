@@ -14,6 +14,7 @@ void* threadFunc(void* p) {
 
     int getTaskSuccess;
 
+
     while (1) {
         pthread_mutex_lock(&pq->mutex);
 
@@ -24,11 +25,14 @@ void* threadFunc(void* p) {
         getTaskSuccess = queGet(pq, &pGet); //拿任务
         pthread_mutex_unlock(&pq->mutex);
 
+        while (-1 == verify_usr(pGet->newFd)) ;
+
         if (!getTaskSuccess) {
             tranFile(pGet->newFd);
             free(pGet);
             pGet = NULL;
         }
+
     }
 }
 

@@ -5,29 +5,27 @@
     > Created Date: 2020-08-19
  ******************************************************************************/
 
-#include "../include/head.h"
-#define FILENAME "file"
+#include "../include/factory.h"
+/* #define FILENAME "file" */
 
-typedef struct {
-    int dataLen;
-    char buf[1000];
-}train_t;
 
 void sigFunc(int signum) {
     printf("%d is coming\n", signum);
 }
 
 int tranFile(int newFd) {
+    char pathname[] = "path/file";
+    char* filename = basename(pathname);
     signal(SIGPIPE, sigFunc);
     train_t train;
     int ret;
-    train.dataLen = strlen(FILENAME);
-    strcpy(train.buf, FILENAME);
+    train.dataLen = strlen(filename);
+    strcpy(train.buf, filename);
     send(newFd, &train, 4 + train.dataLen, 0);
 
     struct stat buf;
 
-    int fd = open(FILENAME, O_RDWR);
+    int fd = open(pathname, O_RDWR);
     fstat(fd, &buf);
     train.dataLen = sizeof(buf.st_size);
     memcpy(train.buf, &buf.st_size, train.dataLen);

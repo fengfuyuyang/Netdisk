@@ -40,6 +40,8 @@
 #include <sys/epoll.h>
 #include <sys/uio.h>
 #include <sys/sendfile.h>
+#include <shadow.h>
+#include <libgen.h>
 
 #define ARGS_CHECK(argc, val) {\
     if(argc != val) {\

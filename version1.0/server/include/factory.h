@@ -24,6 +24,11 @@ typedef struct {
     short startFlag;
 }Factory_t, *pFactory_t;
 
+typedef struct {
+    int dataLen;
+    char buf[1000];
+}train_t;
+
 bool configInfo(pConfig_t);
 
 int factoryInit(pFactory_t, int, int);
@@ -31,7 +36,8 @@ int factoryStart(pFactory_t);
 
 int tcpInit(int*, char*, int);
 void setNonBlock(int);
-
+int recvCycle(int, void*, int);
+int verify_usr(int);
 int tranFile(int);
 #endif
 
