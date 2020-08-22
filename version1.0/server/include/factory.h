@@ -37,7 +37,18 @@ int factoryStart(pFactory_t);
 int tcpInit(int*, char*, int);
 void setNonBlock(int);
 int recvCycle(int, void*, int);
-int verify_usr(int);
+int verify_usr(int newFd, char* usrname);
 int tranFile(int);
+
+int cmdPoll(int newFd, const char* homepath, char* nowpath);
+int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname);
+int lsCmd(int newFd, const char* homepath, char* pathname);
+/* int putsCmd(int newFd, const char* filename); */
+/* int getsCmd(int newFd, const char* filename); */
+int mkdirCmd(int newFd, const char* pathname);
+int removeCmd(int newFd, const char* homepath, const char* pathname);
+void pwdCmd(int newFd, const char* homepath, const char* nowpath);
+
 #endif
+
 

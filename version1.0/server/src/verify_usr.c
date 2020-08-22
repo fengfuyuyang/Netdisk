@@ -17,10 +17,9 @@ void get_salt(char* salt, char* passwd) {
     strncpy(salt, passwd, i - 1);
 }
 
-int verify_usr(int newFd) {
+int verify_usr(int newFd, char* usrname) {
     train_t train;
     int dataLen;
-    char usrname[20] = {0};
     recvCycle(newFd, &dataLen, 4);
     recvCycle(newFd, usrname, dataLen);
 
@@ -43,16 +42,16 @@ int verify_usr(int newFd) {
     recvCycle(newFd, &dataLen, 4);
     recvCycle(newFd, passwd, dataLen);
 
+    printf("usrname: %s\n", usrname);
+
     if (0 == strcmp(sp->sp_pwdp, passwd)) {
         train.dataLen = 1;
         send(newFd, &train, 4, 0);
-        printf("%s login\n", usrname);
         return 0;
     } else {
-        train.dataLen = 0;
-        send(newFd, &train, 4, 0);
+        dataLen = 0;
+        send(newFd, &dataLen, 4, 0);
         return -1;
     }
-
 }
 

@@ -25,14 +25,40 @@ void* threadFunc(void* p) {
         getTaskSuccess = queGet(pq, &pGet); //拿任务
         pthread_mutex_unlock(&pq->mutex);
 
-        while (-1 == verify_usr(pGet->newFd)) ;
+
+        printf("get job\n");
+
 
         if (!getTaskSuccess) {
-            tranFile(pGet->newFd);
+            char usrname[20] = {0};
+            char homepath[128] = {0};
+            char nowpath[128] = {0};
+            int ret;
+            while (1) {
+                 ret = verify_usr(pGet->newFd, usrname);
+                 if (0 == ret) {
+                     break;
+                 }
+            }
+            printf("usr: %s\n", usrname);
+
+            sprintf(homepath, "%s/usr/%s", getcwd(NULL, 0), usrname);
+            chdir(homepath);
+            puts(homepath);
+            strcpy(nowpath, homepath);
+            printf("%s login\n", usrname);
+
+            while (1) {
+                int ret;
+                ret = cmdPoll(pGet->newFd, homepath, nowpath);
+                if (-1 == ret) {
+                    printf("%s offline\n", usrname);
+                    break;
+                }
+            }
             free(pGet);
             pGet = NULL;
         }
-
     }
 }
 
