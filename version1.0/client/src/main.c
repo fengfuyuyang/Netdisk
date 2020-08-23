@@ -73,57 +73,63 @@ int main()
 
     /* fd_set rdset; */
 
-    int epfd = epoll_create(1);
-    struct epoll_event event, evs[2];
-    event.events = EPOLLIN;
-    event.data.fd = STDIN_FILENO;
-    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, STDIN_FILENO, &event);
-    ERROR_CHECK(ret, -1, "epoll_ctl");
+    fflush(stdout);
 
-    /* setNonBlock(socketFd); */
-    event.events = EPOLLIN | EPOLLET;
-    event.data.fd = socketFd;
-    ret = epoll_ctl(epfd, EPOLL_CTL_ADD, socketFd, &event);
-    ERROR_CHECK(ret, -1, "epoll_ctl");
+    int epfd = epoll_create(1);
+    epollInAdd(epfd, STDIN_FILENO);
+    epollInAdd(epfd, socketFd);
+
+    struct epoll_event evs[2];
 
     int readyFdCount, i;
-
     train_t train;
 
+    int cmdFlag;
+    char cmd[8] = {0};
+    char nowpath[512] = "/";
+    printf("~%s$ ", nowpath);
+    /* fflush(stdout); */
     while (1) {
-        /* FD_ZERO(&rdset); */
-        /* FD_SET(STDIN_FILENO, &rdset); */
-        /* FD_SET(socketFd, &rdset); */
-
-        /* ret = select(socketFd + 1, &rdset, NULL, NULL, NULL); */
-
-        readyFdCount = epoll_wait(epfd, evs, 3, -1);
+        printf("while\n");
+        readyFdCount = epoll_wait(epfd, evs, 2, -1);
         for (i = 0; i < readyFdCount; ++i) {
-            if (evs[i].events == EPOLLIN && evs[i].data.fd == STDIN_FILENO) {
+            if (evs[i].data.fd == STDIN_FILENO) {
+                /* printf("~%s$ ", nowpath); */
                 bzero(&train, sizeof(train));
                 ret = read(STDIN_FILENO, train.buf, sizeof(train.buf));
-                if (0 == ret) {
-                    printf("Byebye\n");
-                    goto end;
-                }
                 train.buf[strlen(train.buf) - 1] = '\0';
-                train.dataLen = strlen(train.buf);
+                if (0 == (train.dataLen = strlen(train.buf))) {
+                    break;
+                }
+                sscanf(train.buf, "%s", cmd);
+                if (0 == strcmp(cmd, "cd")) {
+                    cmdFlag = CD;
+                } else if (0 == strcmp(cmd, "ls")) {
+                    cmdFlag = LS;
+                } else if (0 == strcmp(cmd, "puts")) {
+                    cmdFlag = PUTS;
+                } else if (0 == strcmp(cmd, "gets")) {
+                    cmdFlag = GETS;
+                } else if (0 == strcmp(cmd, "mkdir")) {
+                    cmdFlag = MKDIR;
+                } else if (0 == strcmp(cmd, "rm") || 0 == strcmp(cmd, "remove")) {
+                    cmdFlag = RM;
+                } else if (0 == strcmp(cmd, "pwd")) {
+                    puts(nowpath);
+                } else if (0 == strcmp(cmd, "exit")) {
+                    goto end;
+                } else {
+                    break;
+                }
                 send(socketFd, &train, train.dataLen + 4, 0);
+                printf("\nsend: %s\n", train.buf);
             }
             if (evs[i].data.fd == socketFd) {
-                bzero(&train, sizeof(train));
-                ret = recvCycle(socketFd, &train.dataLen, 4);
-                if (0 == train.dataLen) {
-                    break;
-                    puts("no data");
-                    fflush(stdout);
-                } 
+                printf("request\n");
+                ret = request(socketFd, cmdFlag, nowpath);
                 if (-1 == ret) {
                     goto end;
                 }
-                recvCycle(socketFd, train.buf, train.dataLen);
-                printf("recv: %s\n", train.buf);
-                fflush(stdout);
             }
         }
     }

@@ -72,9 +72,17 @@ typedef struct {
     char buf[1000];
 }train_t;
 
+enum CMD {
+    CD, LS, PUTS, GETS, MKDIR, RM, PWD
+};
+
 bool configInfo(pConfig_t);
 void setNonBlock(int);
 int recvCycle(int, void*, int);
-int login(int);
+int endRcv(int socketFd);
+int login(int socketFd);
+int epollInAdd(int epfd, int fd);
+int request(int socketFd, int CMD, char* nowpath);
 
 #endif
+

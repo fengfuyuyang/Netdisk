@@ -7,7 +7,8 @@
 
 #define _XOPEN_SOURCE
 #include "../include/head.h"
-int login(int fd) {
+
+int login(int socketFd) {
     train_t train = {};
     int dataLen;
     char username[20] = {0};
@@ -16,26 +17,30 @@ int login(int fd) {
     strcpy(train.buf, username);
     train.dataLen = strlen(train.buf);
 
-    send(fd, &train, train.dataLen + 4, 0); //发送用户名
-
-    recvCycle(fd, &dataLen, 4);
-    if (0 == dataLen) {
-        puts("username error");
+    send(socketFd, &train, train.dataLen + 4, 0); //发送用户名
+    bzero(&train, sizeof(train));
+    recvCycle(socketFd, &dataLen, 4);
+    if (dataLen) {
+        recvCycle(socketFd, train.buf, dataLen);
+        puts(train.buf);
         return -1;
     }
 
     bzero(&train, sizeof(train));
     char salt[16] = {0};
-    recvCycle(fd, salt, dataLen);
+    recvCycle(socketFd, &dataLen, 4);
+    recvCycle(socketFd, salt, dataLen);
 
     char* password = getpass("Please enter password: ");
     strcpy(train.buf, crypt(password, salt));
     train.dataLen = strlen(train.buf);
-    send(fd, &train, train.dataLen + 4, 0); //发送密码密文
+    send(socketFd, &train, train.dataLen + 4, 0); //发送密码密文
 
-    recvCycle(fd, &dataLen, 4);
-    if (0 == dataLen) {
-        puts("password error!");
+    bzero(&train, sizeof(train));
+    recvCycle(socketFd, &dataLen, 4);
+    if (dataLen) {
+        recvCycle(socketFd, train.buf, dataLen);
+        puts(train.buf);
         return -1;
     }
     return 0;

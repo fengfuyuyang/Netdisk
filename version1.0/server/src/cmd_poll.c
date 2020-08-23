@@ -23,16 +23,20 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
     recvCycle(newFd, buf, dataLen);
 
     sscanf(buf, "%s %s", cmd, tmp);
-    printf("cmd: %s", cmd);
 
     if (0 == strcmp(cmd, "cd")) {
         cdCmd(newFd, homepath, nowpath, tmp);
+
+        /* 给客户端发送更新后的当前目录 */
+        pwdCmd(newFd, homepath, nowpath);
     } else if (0 == strcmp(cmd, "ls")) {
         lsCmd(newFd, homepath, tmp);
     } else if (0 == strcmp(cmd, "puts")) {
         /* putsCmd(newFd, tmp); */
     } else if (0 == strcmp(cmd, "gets")) {
         /* getsCmd(newFd, tmp); */
+    } else if (0 == strcmp(cmd, "mkdir")) {
+        mkdirCmd(newFd, tmp);
     } else if (0 == strcmp(cmd, "rm") || 0 == strcmp(cmd, "remove")) {
         removeCmd(newFd, homepath, tmp);
     } else if (0 == strcmp(cmd, "pwd")) {

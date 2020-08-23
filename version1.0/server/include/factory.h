@@ -39,6 +39,7 @@ void setNonBlock(int);
 int recvCycle(int, void*, int);
 int verify_usr(int newFd, char* usrname);
 int tranFile(int);
+void endFlag(int newFd);
 
 int cmdPoll(int newFd, const char* homepath, char* nowpath);
 int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname);

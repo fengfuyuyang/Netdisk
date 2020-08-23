@@ -45,9 +45,11 @@ int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname) 
             train.dataLen = strlen(train.buf);
             send(newFd, &train, train.dataLen + 4, 0);
             free(actualpath);
+            actualpath = NULL;
             return -1;
         }
         free(actualpath);
+        actualpath = NULL;
 
         /* pathname为普通文件,直接退出 */
         if (S_ISREG(dir_stat.st_mode)) {
@@ -62,6 +64,7 @@ int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname) 
             strcpy(nowpath, getcwd(NULL, 0));
         }
     }
+    endFlag(newFd);
     /* printf("nowpath: %s\n", nowpath); */
 
     return 0;

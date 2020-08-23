@@ -71,8 +71,7 @@ int removeCmd(int newFd, const char* homepath, const char* pathname) {
         train.dataLen = strlen(train.buf);
         send(newFd, &train, train.dataLen + 4, 0);
     }
-    int endflag = 0;
-    send(newFd, &endflag, 4, 0);
+    endFlag(newFd);
     return 0;
 }
 

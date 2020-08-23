@@ -27,9 +27,12 @@ int verify_usr(int newFd, char* usrname) {
     char salt[512] = {0};
 
     if (NULL == (sp = getspnam(usrname))) {
-        train.dataLen = 0;
-        send(newFd, &train, 4, 0);
+        strcpy(train.buf, "usrname error");
+        train.dataLen = strlen(train.buf);
+        send(newFd, &train, train.dataLen + 4, 0);
         return -1;
+    } else {
+        endFlag(newFd);
     }
     get_salt(salt, sp->sp_pwdp);
 
@@ -42,15 +45,13 @@ int verify_usr(int newFd, char* usrname) {
     recvCycle(newFd, &dataLen, 4);
     recvCycle(newFd, passwd, dataLen);
 
-    printf("usrname: %s\n", usrname);
-
     if (0 == strcmp(sp->sp_pwdp, passwd)) {
-        train.dataLen = 1;
-        send(newFd, &train, 4, 0);
+        endFlag(newFd);
         return 0;
     } else {
-        dataLen = 0;
-        send(newFd, &dataLen, 4, 0);
+        strcpy(train.buf, "password error!");
+        train.dataLen = strlen(train.buf);
+        send(newFd, &train, train.dataLen + 4, 0);
         return -1;
     }
 }

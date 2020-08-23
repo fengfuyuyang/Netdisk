@@ -40,14 +40,12 @@ void* threadFunc(void* p) {
                      break;
                  }
             }
-            printf("usr: %s\n", usrname);
-
             sprintf(homepath, "%s/usr/%s", getcwd(NULL, 0), usrname);
             chdir(homepath);
-            puts(homepath);
             strcpy(nowpath, homepath);
             printf("%s login\n", usrname);
 
+            int i = 0;
             while (1) {
                 int ret;
                 ret = cmdPoll(pGet->newFd, homepath, nowpath);
@@ -55,6 +53,7 @@ void* threadFunc(void* p) {
                     printf("%s offline\n", usrname);
                     break;
                 }
+                printf("poll count: %d\n", ++i);
             }
             free(pGet);
             pGet = NULL;

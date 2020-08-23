@@ -55,6 +55,7 @@ int lsCmd(int newFd, const char* homepath, char* pathname) {
         train.dataLen = strlen(train.buf);
         send(newFd, &train, train.dataLen + 4, 0);
 		/* perror("opendir"); */
+        endFlag(newFd);
 		return -1;
 	}
 
@@ -65,6 +66,7 @@ int lsCmd(int newFd, const char* homepath, char* pathname) {
         sprintf(train.buf, "ls: cannot access '%s': No such file or directory", pathname);
         train.dataLen = strlen(train.buf);
         send(newFd, &train, train.dataLen + 4, 0);
+        endFlag(newFd);
         free(actualpath);
         return -1;
     }
@@ -85,11 +87,8 @@ int lsCmd(int newFd, const char* homepath, char* pathname) {
             send(newFd, &train, train.dataLen + 4, 0);
         }
     }
-    int endflag = 0;
-    send(newFd, &endflag, 4, 0);
+    endFlag(newFd);
     closedir(ret_opendir);
-
-    printf("end ls cmd\n");
 
     return 0;
 }

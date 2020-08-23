@@ -17,8 +17,7 @@ int mkdirCmd(int newFd, const char* pathname) {
         send(newFd, &train, train.dataLen + 4, 0);
         return -1;
     }
-    int flag = 0;
-    send(newFd, &flag, 4, 0);
+    endFlag(newFd);
 
     return 0;
 }
