@@ -22,7 +22,10 @@ int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname) 
             sprintf(buf, "%s/%s", nowpath, pathname);
         }
         /* DIR * ret = opendir(buf); */
-        if (!access(buf, F_OK)) {
+        if (-1 == access(buf, F_OK)) {
+#if 1
+            puts("cdCmd line29");
+#endif
             sprintf(train.buf, "cd: %s: No such file or directory", pathname);
             train.dataLen = strlen(train.buf);
             send(newFd, &train, 4 + train.dataLen, 0);
@@ -31,6 +34,9 @@ int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname) 
 
         struct stat dir_stat;
         if (stat(buf, &dir_stat) < 0) {
+#if 1
+            puts("cdCmd line40");
+#endif
             sprintf(train.buf, "cd: %s: No such file or directory", pathname);
             train.dataLen = strlen(train.buf);
             send(newFd, &train, 4 + train.dataLen, 0);
@@ -41,6 +47,9 @@ int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname) 
         /* realpath(),第二个参数使用NULL，会自动malloc足够的空间来存放绝对路径，需要手动释放空间 */
         char * actualpath = realpath(pathname, NULL);
         if (strlen(actualpath) < strlen(homepath)) {
+#if 1
+            puts("cdCmd line53");
+#endif
             sprintf(train.buf, "cd: %s: No such file or directory", pathname);
             train.dataLen = strlen(train.buf);
             send(newFd, &train, train.dataLen + 4, 0);

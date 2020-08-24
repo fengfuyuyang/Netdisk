@@ -30,7 +30,7 @@ char *file_mode(const struct stat* file) {
 
 void list_info(const char* filename , const struct stat* file, char* buf) {
 	struct tm* t = localtime(&file->st_mtime);
-	sprintf(buf, "%s %2ld %s %s %6ld %2d月 %2d %02d:%02d %s\n", 
+	sprintf(buf, "%s %2ld %s %s %6ld %2d月 %2d %02d:%02d %s", 
            file_mode(file), 
            file->st_nlink, 
            getpwuid(file->st_uid)->pw_name, 

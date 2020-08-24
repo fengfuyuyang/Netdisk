@@ -30,17 +30,28 @@ int request(int socketFd, int CMD, char* nowpath) {
         while (dataLen) {
             recvCycle(socketFd, buf, dataLen);
             puts(buf);
-            /* bzero(buf, sizeof(buf)); */
+            bzero(buf, sizeof(buf));
             recvCycle(socketFd, &dataLen, 4);
         }
         break;
     case PUTS:
     case GETS:
     case MKDIR:
-    case RM:
         ret = endRcv(socketFd);
         if (-1 == ret) {
             return -1;
+        }
+        break;
+    case RM:
+        ret = recvCycle(socketFd, &dataLen, 4);
+        if (-1 == ret) {
+            return -1;
+        }
+        while (dataLen) {
+            recvCycle(socketFd, buf, dataLen);
+            puts(buf);
+            bzero(buf, sizeof(buf));
+            recvCycle(socketFd, &dataLen, 4);
         }
         break;
     case PWD:
@@ -52,6 +63,12 @@ int request(int socketFd, int CMD, char* nowpath) {
         puts(buf);
         break;
     default:
+        ret = recvCycle(socketFd, &dataLen, 4);
+        if (-1 == ret) {
+            return -1;
+        }
+        recvCycle(socketFd, buf, dataLen);
+        puts(buf);
         break;
     }
     return 0;

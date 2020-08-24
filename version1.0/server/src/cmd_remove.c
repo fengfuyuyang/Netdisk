@@ -22,7 +22,7 @@ int removeCmd(int newFd, const char* homepath, const char* pathname) {
     }
 
     /* 若目录不存在，直接返回 */
-    if (access(pathname, F_OK)) {
+    if (-1 == access(pathname, F_OK)) {
         sprintf(train.buf, "rm: cannot remove '%s': No such file or directory", pathname);
         train.dataLen = strlen(train.buf);
         send(newFd, &train, train.dataLen + 4, 0);
@@ -71,7 +71,6 @@ int removeCmd(int newFd, const char* homepath, const char* pathname) {
         train.dataLen = strlen(train.buf);
         send(newFd, &train, train.dataLen + 4, 0);
     }
-    endFlag(newFd);
     return 0;
 }
 

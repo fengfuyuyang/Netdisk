@@ -6,6 +6,7 @@
  ******************************************************************************/
 
 #include "../include/factory.h"
+#define rootpath "/home/gao/project/Netdisk/version1.0/server/src/usr"
 
 void* threadFunc(void* p) {
     pFactory_t pThreadInfo = (pFactory_t)p;
@@ -13,7 +14,6 @@ void* threadFunc(void* p) {
     pNode_t pGet;
 
     int getTaskSuccess;
-
 
     while (1) {
         pthread_mutex_lock(&pq->mutex);
@@ -24,10 +24,6 @@ void* threadFunc(void* p) {
 
         getTaskSuccess = queGet(pq, &pGet); //拿任务
         pthread_mutex_unlock(&pq->mutex);
-
-
-        printf("get job\n");
-
 
         if (!getTaskSuccess) {
             char usrname[20] = {0};
@@ -40,12 +36,11 @@ void* threadFunc(void* p) {
                      break;
                  }
             }
-            sprintf(homepath, "%s/usr/%s", getcwd(NULL, 0), usrname);
-            chdir(homepath);
+            sprintf(homepath, "%s/%s", rootpath, usrname);
             strcpy(nowpath, homepath);
             printf("%s login\n", usrname);
+            puts(homepath);
 
-            int i = 0;
             while (1) {
                 int ret;
                 ret = cmdPoll(pGet->newFd, homepath, nowpath);
@@ -53,7 +48,6 @@ void* threadFunc(void* p) {
                     printf("%s offline\n", usrname);
                     break;
                 }
-                printf("poll count: %d\n", ++i);
             }
             free(pGet);
             pGet = NULL;

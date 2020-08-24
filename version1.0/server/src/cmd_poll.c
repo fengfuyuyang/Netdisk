@@ -8,6 +8,7 @@
 #include "../include/factory.h"
 
 int cmdPoll(int newFd, const char* homepath, char* nowpath) {
+
     train_t train;
     int dataLen;
     char buf[128] = {0};
@@ -16,13 +17,17 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
 
     int ret = recvCycle(newFd, &dataLen, 4);
 
-    /* 客户端断开连接 */
     if (-1 == ret) {
         return -1;
     }
     recvCycle(newFd, buf, dataLen);
-
     sscanf(buf, "%s %s", cmd, tmp);
+
+    /* 校正当前所在目录, 避免多客户端连接时目录混乱 */
+    chdir(nowpath);
+#if 1
+    printf("nowpath: %s\n", nowpath);
+#endif
 
     if (0 == strcmp(cmd, "cd")) {
         cdCmd(newFd, homepath, nowpath, tmp);
@@ -38,7 +43,12 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
     } else if (0 == strcmp(cmd, "mkdir")) {
         mkdirCmd(newFd, tmp);
     } else if (0 == strcmp(cmd, "rm") || 0 == strcmp(cmd, "remove")) {
-        removeCmd(newFd, homepath, tmp);
+
+        /* removeCmd()中包含递归调用，可能多次发送数据给客户端，
+         * 需要发送结束标志给客户端 */
+        if (0 == removeCmd(newFd, homepath, tmp)) {
+            endFlag(newFd);
+        }
     } else if (0 == strcmp(cmd, "pwd")) {
         pwdCmd(newFd, homepath, nowpath);
     } else {

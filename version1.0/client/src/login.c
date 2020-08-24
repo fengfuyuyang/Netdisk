@@ -8,13 +8,12 @@
 #define _XOPEN_SOURCE
 #include "../include/head.h"
 
-int login(int socketFd) {
+int login(int socketFd, char* usrname) {
     train_t train = {};
     int dataLen;
-    char username[20] = {0};
     printf("Please enter usrname: ");
-    scanf("%s", username);
-    strcpy(train.buf, username);
+    scanf("%s", usrname);
+    strcpy(train.buf, usrname);
     train.dataLen = strlen(train.buf);
 
     send(socketFd, &train, train.dataLen + 4, 0); //发送用户名

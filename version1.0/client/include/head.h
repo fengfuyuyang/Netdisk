@@ -80,7 +80,7 @@ bool configInfo(pConfig_t);
 void setNonBlock(int);
 int recvCycle(int, void*, int);
 int endRcv(int socketFd);
-int login(int socketFd);
+int login(int socketFd, char* usrname);
 int epollInAdd(int epfd, int fd);
 int request(int socketFd, int CMD, char* nowpath);
 
