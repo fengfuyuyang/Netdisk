@@ -43,6 +43,7 @@ int main()
 
     int cmdFlag;
     char cmd[8] = {0};
+    char pathname[128] = {0};
     char nowpath[512] = "/";
     printf("%s:~%s$ ", usrname, nowpath);
     fflush(stdout);
@@ -58,7 +59,7 @@ int main()
                     fflush(stdout);
                     break;
                 }
-                sscanf(train.buf, "%s", cmd);
+                sscanf(train.buf, "%s%s", cmd, pathname);
                 if (0 == strcmp(cmd, "cd")) {
                     cmdFlag = CD;
                 } else if (0 == strcmp(cmd, "ls")) {
@@ -75,15 +76,24 @@ int main()
                     cmdFlag = PWD;
                 } else if (0 == strcmp(cmd, "exit")) {
                     goto end;
+                } else {
+                    printf("%s: commmond not found\n", cmd);
+                    printf("%s:~%s$ ", usrname, nowpath);
+                    fflush(stdout);
                 }
                 send(socketFd, &train, train.dataLen + 4, 0);
             }
             if (evs[i].data.fd == socketFd) {
-                ret = request(socketFd, cmdFlag, nowpath);
+                ret = request(socketFd, pathname, cmdFlag, nowpath);
                 if (-1 == ret) {
                     printf("\nServer disconnected\n");
                     goto end;
                 }
+                printf("%s:~%s$ ", usrname, nowpath);
+                fflush(stdout);
+            }
+            if (cmdFlag == PUTS) {
+                putsCmd(socketFd, pathname);
                 printf("%s:~%s$ ", usrname, nowpath);
                 fflush(stdout);
             }

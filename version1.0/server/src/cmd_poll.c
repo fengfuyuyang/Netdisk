@@ -9,7 +9,7 @@
 
 int cmdPoll(int newFd, const char* homepath, char* nowpath) {
 
-    train_t train;
+    /* train_t train; */
     int dataLen;
     char buf[128] = {0};
     char cmd[8] = {0};
@@ -22,6 +22,7 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
     }
     recvCycle(newFd, buf, dataLen);
     sscanf(buf, "%s %s", cmd, tmp);
+    printf("client cmd: %s %s\n", cmd, tmp);
 
     /* 校正当前所在目录, 避免多客户端连接时目录混乱 */
     chdir(nowpath);
@@ -37,9 +38,9 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
     } else if (0 == strcmp(cmd, "ls")) {
         lsCmd(newFd, homepath, tmp);
     } else if (0 == strcmp(cmd, "puts")) {
-        /* putsCmd(newFd, tmp); */
+        putsCmd(newFd);
     } else if (0 == strcmp(cmd, "gets")) {
-        /* getsCmd(newFd, tmp); */
+        getsCmd(newFd, tmp);
     } else if (0 == strcmp(cmd, "mkdir")) {
         mkdirCmd(newFd, tmp);
     } else if (0 == strcmp(cmd, "rm") || 0 == strcmp(cmd, "remove")) {
@@ -51,11 +52,12 @@ int cmdPoll(int newFd, const char* homepath, char* nowpath) {
         }
     } else if (0 == strcmp(cmd, "pwd")) {
         pwdCmd(newFd, homepath, nowpath);
-    } else {
-        sprintf(train.buf, "%s: command not found", cmd);
-        train.dataLen = strlen(train.buf);
-        send(newFd, &train, train.dataLen + 4, 0);
-    }
+    } 
+    /* else { */
+    /*     sprintf(train.buf, "%s: command not found", cmd); */
+    /*     train.dataLen = strlen(train.buf); */
+    /*     send(newFd, &train, train.dataLen + 4, 0); */
+    /* } */
     return 0;
 }
 

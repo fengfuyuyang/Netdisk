@@ -33,6 +33,7 @@
 #include <sys/epoll.h>
 #include <sys/uio.h>
 #include <sys/sendfile.h>
+#include <libgen.h>
 
 /* #define ARGS_CHECK(argc, val) {\ */
 /*     if(argc != val) {\ */
@@ -82,7 +83,9 @@ int recvCycle(int, void*, int);
 int endRcv(int socketFd);
 int login(int socketFd, char* usrname);
 int epollInAdd(int epfd, int fd);
-int request(int socketFd, int CMD, char* nowpath);
+int request(int socketFd, char* nowpath, int CMD, char* pathname);
+int getsCmd(int socketFd);
+int putsCmd(int socketFd, char* pathname);
 
 #endif
 

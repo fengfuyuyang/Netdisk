@@ -7,7 +7,7 @@
 
 #include "../include/head.h"
 
-int request(int socketFd, int CMD, char* nowpath) {
+int request(int socketFd, char* nowpath, int CMD, char* pathname) {
 
     int dataLen, ret;
     char buf[512] = {0};
@@ -34,8 +34,9 @@ int request(int socketFd, int CMD, char* nowpath) {
             recvCycle(socketFd, &dataLen, 4);
         }
         break;
-    case PUTS:
     case GETS:
+        getsCmd(socketFd);
+        break;
     case MKDIR:
         ret = endRcv(socketFd);
         if (-1 == ret) {
@@ -63,12 +64,12 @@ int request(int socketFd, int CMD, char* nowpath) {
         puts(buf);
         break;
     default:
-        ret = recvCycle(socketFd, &dataLen, 4);
-        if (-1 == ret) {
-            return -1;
-        }
-        recvCycle(socketFd, buf, dataLen);
-        puts(buf);
+        /* ret = recvCycle(socketFd, &dataLen, 4); */
+        /* if (-1 == ret) { */
+        /*     return -1; */
+        /* } */
+        /* recvCycle(socketFd, buf, dataLen); */
+        /* puts(buf); */
         break;
     }
     return 0;

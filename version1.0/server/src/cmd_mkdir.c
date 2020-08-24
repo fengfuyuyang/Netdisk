@@ -7,8 +7,7 @@
 
 #include "../include/factory.h"
 
-int mkdirCmd(int newFd, const char* pathname, const char* nowpath) {
-    chdir(nowpath);
+int mkdirCmd(int newFd, const char* pathname) {
     train_t train;
     int ret;
     ret = mkdir(pathname, 0777);

@@ -80,7 +80,7 @@ int lsCmd(int newFd, const char* homepath, char* pathname) {
         int ret_stat = lstat(filename, &file_message);
 
         if (ret_stat == -1) {
-            printf("%s error!", filename);
+            printf("%s error!\n", filename);
         } else if(strcmp(filename,".") && strcmp(filename,"..")) {
             list_info(filename, &file_message, train.buf);
             train.dataLen = strlen(train.buf);

@@ -44,8 +44,8 @@ void endFlag(int newFd);
 int cmdPoll(int newFd, const char* homepath, char* nowpath);
 int cdCmd(int newFd, const char* homepath, char* nowpath, const char* pathname);
 int lsCmd(int newFd, const char* homepath, char* pathname);
-/* int putsCmd(int newFd, const char* filename); */
-/* int getsCmd(int newFd, const char* filename); */
+int putsCmd(int newFd);
+int getsCmd(int newFd, char* filename);
 int mkdirCmd(int newFd, const char* pathname);
 int removeCmd(int newFd, const char* homepath, const char* pathname);
 void pwdCmd(int newFd, const char* homepath, const char* nowpath);
